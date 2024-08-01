@@ -12,6 +12,17 @@ public class Product {
     this.price = price;
   }
 
+  public Product(Long id, String description, double price, double inventory) {
+    this.id = id;
+    this.description = description;
+    this.inventory = inventory;
+    this.price = price;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
   public String getDescription() {
     return description;
   }
