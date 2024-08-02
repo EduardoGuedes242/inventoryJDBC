@@ -12,6 +12,29 @@ import java.util.List;
 
 public class ProductService {
 
+  public void updateProduct(Product product) {
+
+    String sqlUpdate = """
+            UPDATE tbl$product SET
+            description = ?,
+            inventory = ?,
+            price = ?
+            WHERE id = ?
+            """;
+
+    try(Connection connection = ConnectionDB.startConnection();
+    PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate);
+    ) {
+      preparedStatement.setString(1, product.getDescription());
+      preparedStatement.setDouble(2, product.getInventory());
+      preparedStatement.setDouble(3, product.getPrice());
+      preparedStatement.setLong(4, product.getId());
+
+      preparedStatement.execute();
+    } catch (SQLException e) {
+      System.out.println("Ocorreu o seguinte erro ao atualizar o produto: " + e.getMessage());
+    }
+  }
 
   public List<Product> getAllProdutcs() {
     String slqSelect = """
@@ -44,6 +67,39 @@ public class ProductService {
       System.out.println("Ocorreu i seguinte erro: " + e.getMessage());
     }
     return listProducts;
+  }
+
+  public Product getProduct(Long id) {
+    String slqSelect = String.format("""
+            SELECT
+              id,
+              description,
+              inventory,
+              price
+            FROM tbl$product
+            where id = %s
+            """, id);
+
+    System.out.println(slqSelect);
+
+    try(Connection connection = ConnectionDB.startConnection();
+        ResultSet resultSet = connection.createStatement().executeQuery(slqSelect)
+    ) {
+
+      while (resultSet.next())
+      {
+        Product product = new Product(
+                id,
+                resultSet.getString("description"),
+                resultSet.getDouble("price"),
+                resultSet.getDouble("inventory")
+        );
+        return product;
+      }
+    } catch (SQLException e) {
+      System.out.println("Ocorreu i seguinte erro: " + e.getMessage());
+    }
+     return null;
   }
 
   public void insertProduct(Product product) {

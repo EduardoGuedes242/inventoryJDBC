@@ -20,12 +20,14 @@ public class InventoryJdbcApplication {
 		System.out.println("1 - Cadastrar Produto");
 		System.out.println("2 - Listar Produtos");
 		System.out.println("3 - Deletar Produtos");
+		System.out.println("4 - Atualizar Produtos");
 		Scanner scanner = new Scanner(System.in);
 
-		Product productTeclado = new Product("Mouse Gamer", 44.90);
+
 
 		int opcao = scanner.nextInt();
 		if(opcao == 1) {
+			Product productTeclado = new Product("Mouse Gamer", 44.90);
 			productService.insertProduct(productTeclado);
 		} else if (opcao == 2) {
 			List<Product> productList = productService.getAllProdutcs();
@@ -61,6 +63,39 @@ public class InventoryJdbcApplication {
 								" Preço Praticado: " + productActual.getPrice()
 				);
 			}
+		} else if (opcao == 4) {
+			System.out.println("Qual produto deseja Alterar");
+
+			List<Product> productListAfter = productService.getAllProdutcs();
+			for(Product productActual : productListAfter) {
+				System.out.println("ID: " + productActual.getId() +
+								" Descricao: " + productActual.getDescription() +
+								" Saldo Estoque: " + productActual.getInventory() +
+								" Preço Praticado: " + productActual.getPrice()
+				);
+			}
+
+			Long idProduct = scanner.nextLong();
+
+			Product product = productService.getProduct(idProduct);
+
+
+
+			product.setDescription("Feijao Carioca");
+			product.setPrice(55);
+
+			productService.updateProduct(product);
+
+			System.out.println("Sua nova lista de produtos é: ");
+			productListAfter = productService.getAllProdutcs();
+			for(Product productActual : productListAfter) {
+				System.out.println("ID: " + productActual.getId() +
+								" Descricao: " + productActual.getDescription() +
+								" Saldo Estoque: " + productActual.getInventory() +
+								" Preço Praticado: " + productActual.getPrice()
+				);
+			}
+
 		}
 	}
 
