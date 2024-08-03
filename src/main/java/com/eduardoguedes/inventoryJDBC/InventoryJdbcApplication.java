@@ -23,8 +23,6 @@ public class InventoryJdbcApplication {
 		System.out.println("4 - Atualizar Produtos");
 		Scanner scanner = new Scanner(System.in);
 
-
-
 		int opcao = scanner.nextInt();
 		if(opcao == 1) {
 			Product productTeclado = new Product("Mouse Gamer", 44.90);
@@ -78,8 +76,6 @@ public class InventoryJdbcApplication {
 			Long idProduct = scanner.nextLong();
 
 			Product product = productService.getProduct(idProduct);
-
-
 
 			product.setDescription("Feijao Carioca");
 			product.setPrice(55);
