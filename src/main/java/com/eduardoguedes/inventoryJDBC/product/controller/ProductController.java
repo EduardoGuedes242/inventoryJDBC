@@ -2,8 +2,14 @@ package com.eduardoguedes.inventoryJDBC.product.controller;
 
 import com.eduardoguedes.inventoryJDBC.product.entity.Product;
 import com.eduardoguedes.inventoryJDBC.product.service.ProductService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +22,25 @@ public class ProductController {
   @GetMapping
   public List<Product> getAllProducts() {
     return productService.getAllProdutcs();
+  }
+
+  @PostMapping("/upload-products")
+  public ResponseEntity<String> uploadProducts(@RequestParam("file") MultipartFile file) {
+    if (file.isEmpty()) {
+      return new ResponseEntity<>("Por favor, envie um arquivo!", HttpStatus.BAD_REQUEST);
+    }
+
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        String[] data = line.split(";"); // Assumindo que os dados estão separados por vírgulas
+        Product product = new Product(data[0], Double.parseDouble(data[1])); // ajuste conforme a estrutura do seu arquivo e classe Product
+        productService.insertProduct(product);
+      }
+      return new ResponseEntity<>("Produtos carregados com sucesso!", HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>("Erro ao carregar produtos: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @PostMapping
