@@ -25,16 +25,16 @@ public class ProductController {
   }
 
   @PostMapping("/upload-products")
-  public ResponseEntity<String> uploadProducts(@RequestParam("file") MultipartFile file) {
-    if (file.isEmpty()) {
-      return new ResponseEntity<>("Por favor, envie um arquivo!", HttpStatus.BAD_REQUEST);
-    }
+  public ResponseEntity<String> uploadProducts(@RequestParam("file") MultipartFile file,
+                                               @RequestParam("pSeparador") String pSeparador,
+                                               @RequestParam("pDescription") int pDescription,
+                                               @RequestParam("pPrice") int pPrice) {
 
     try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
       String line;
       while ((line = br.readLine()) != null) {
-        String[] data = line.split(";"); // Assumindo que os dados estão separados por vírgulas
-        Product product = new Product(data[0], Double.parseDouble(data[1])); // ajuste conforme a estrutura do seu arquivo e classe Product
+        String[] data = line.split(pSeparador);
+        Product product = new Product(data[pDescription], Double.parseDouble(data[pPrice]));
         productService.insertProduct(product);
       }
       return new ResponseEntity<>("Produtos carregados com sucesso!", HttpStatus.OK);
